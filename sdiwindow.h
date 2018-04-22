@@ -20,23 +20,38 @@ private:
     void createMenus();
     void createToolbars();
     void createDocks();
+
     bool isSafeToClose();
+
+    bool saveFile(const QString &filename);
+    void loadFile(const QString &filename);
 
 private slots:
     void fileNew();
+    void fileOpen();
+    bool fileSave();
+    bool fileSaveAs();
 
 private:
     QTextEdit   *docWidget;
+    QString     currentFilename;
+    QDockWidget *dock;
+
+    QMenu       *menu;
+    QToolBar    *toolbar;
+
     QAction     *newAction;
+    QAction     *openAction;
+    QAction     *saveAction;
+    QAction     *saveAsAction;
+    QAction     *closeAction;
+    QAction     *exitAction;
+
     QAction     *cutAction;
     QAction     *copyAction;
     QAction     *pasteAction;
+
     QAction     *aboutQtAction;
-    QAction     *closeAction;
-    QAction     *exitAction;
-    QMenu       *menu;
-    QToolBar    *toolbar;
-    QDockWidget *dock;
 };
 
 #endif // SDIWINDOW_H

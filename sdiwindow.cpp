@@ -9,6 +9,9 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QDockWidget>
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 
 SdiWindow::SdiWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,10 +36,36 @@ SdiWindow::SdiWindow(QWidget *parent)
 void SdiWindow::createActions()
 {
     newAction = new QAction(tr("&New"), this);
-    newAction->setShortcut(tr("Ctrl+N") );
+    newAction->setShortcut(tr("Ctrl+N"));
     newAction->setStatusTip(tr("Create a new document"));
     connect(newAction, SIGNAL(triggered()),
             this, SLOT(fileNew()));
+
+    openAction = new QAction(tr("&Open"), this);
+    openAction->setStatusTip(tr("Open a document"));
+    connect(openAction, SIGNAL(triggered()),
+            this, SLOT(fileOpen()));
+
+    saveAction = new QAction(tr("&Save"), this);
+    saveAction->setShortcut(tr("Ctrl+S"));
+    saveAction->setStatusTip(tr("Save a document"));
+    connect(saveAction, SIGNAL(triggered()),
+            this, SLOT(fileSave()));
+
+    saveAsAction = new QAction(tr("&SaveAs"), this);
+    saveAsAction->setStatusTip(tr("Save a document as"));
+    connect(saveAsAction, SIGNAL(triggered()),
+            this, SLOT(fileSaveAs()));
+
+    closeAction = new QAction(tr("&Close"), this);
+    closeAction->setStatusTip(tr("Close this window"));
+    connect(closeAction, SIGNAL(triggered()),
+            this, SLOT(close()));
+
+    exitAction = new QAction(tr("&Exit"), this);
+    exitAction->setStatusTip(tr("Exit the application"));
+    connect(exitAction, SIGNAL(triggered()),
+            qApp, SLOT(closeAllWindows()));
 
     cutAction = new QAction(tr("&Cut"), this);
     cutAction->setShortcut (tr("Ctrl+X"));
@@ -65,22 +94,17 @@ void SdiWindow::createActions()
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
     connect(aboutQtAction, SIGNAL(triggered()),
              qApp, SLOT(aboutQt()));
-
-    closeAction = new QAction(tr("&Close"), this);
-    closeAction->setStatusTip(tr("Close this window"));
-    connect(closeAction, SIGNAL(triggered()),
-            this, SLOT(close()));
-
-    exitAction = new QAction(tr("&Exit"), this);
-    exitAction->setStatusTip(tr("Exit the application"));
-    connect(exitAction, SIGNAL(triggered()),
-            qApp, SLOT(closeAllWindows()));
 }
 
 void SdiWindow::createMenus()
 {
     menu = menuBar()->addMenu(tr("&File"));
     menu->addAction(newAction);
+    menu->addAction(openAction);
+    menu->addSeparator();
+    menu->addAction(saveAction);
+    menu->addAction(saveAsAction);
+    menu->addSeparator();
     menu->addAction(closeAction);
     menu->addSeparator();
     menu->addAction(exitAction);
@@ -101,8 +125,14 @@ void SdiWindow::createToolbars()
 {
     toolbar = addToolBar(tr("File"));
     toolbar->addAction(newAction);
+    toolbar->addAction(openAction);
+    toolbar->addSeparator();
+    toolbar->addAction(saveAction);
+    toolbar->addAction(saveAsAction);
     toolbar->addSeparator();
     toolbar->addAction(cutAction);
+    toolbar->addAction(copyAction);
+    toolbar->addAction(pasteAction);
     toolbar->addAction(aboutQtAction);
 }
 
@@ -122,6 +152,40 @@ void SdiWindow::fileNew()
     (new SdiWindow())->show();
 }
 
+void SdiWindow::fileOpen()
+{
+    QString fileName = QFileDialog::getOpenFileName(this);
+    if (fileName.isEmpty())
+        return;
+
+    if (currentFilename.isEmpty() && !docWidget->document()->isModified())
+        loadFile(fileName);
+    else {
+        SdiWindow *window = new SdiWindow();
+        window->loadFile(fileName);
+        window->show();
+    }
+}
+
+bool SdiWindow::fileSave()
+{
+    if (currentFilename.isEmpty())
+        return fileSaveAs();
+    else
+        return saveFile(currentFilename);
+}
+
+bool SdiWindow::fileSaveAs()
+{
+    QString fileName =
+    QFileDialog::getSaveFileName(this, tr("Save As"), currentFilename);
+
+    if (fileName.isEmpty())
+        return false;
+
+    return saveFile(fileName);
+}
+
 void SdiWindow::closeEvent(QCloseEvent *event)
 {
     if (isSafeToClose())
@@ -136,13 +200,48 @@ bool SdiWindow::isSafeToClose()
         switch( QMessageBox::warning( this, tr("SDI"),
             tr("The document has unsaved changes.\n"
                 "Do you want to save it before it is closed?"),
-                QMessageBox::Discard | QMessageBox::Cancel)) {
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel)) {
         case QMessageBox::Cancel:
             return false;
+        case QMessageBox::Save:
+            return fileSave();
         default:
             return true;
         }
     }
 
     return true;
+}
+
+bool SdiWindow::saveFile(const QString &filename)
+{
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("SDI"), tr("Failed to save file."));
+        return false;
+    }
+
+    QTextStream stream(&file);
+    stream << docWidget->toPlainText();
+
+    currentFilename = filename;
+    docWidget->document()->setModified(false);
+    setWindowTitle(tr("%1[*] - %2" ).arg(filename).arg(tr("SDI")));
+
+    return true;
+}
+
+void SdiWindow::loadFile(const QString &filename)
+{
+    QFile file(filename);
+    if (!file.open( QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("SDI"), tr("Failed to open file."));
+        return;
+    }
+
+    QTextStream stream(&file);
+    docWidget->setPlainText(stream.readAll());
+    currentFilename = filename;
+    docWidget->document()->setModified(false);
+    setWindowTitle(tr("%1[*] - %2" ).arg(filename).arg(tr("SDI")));
 }
