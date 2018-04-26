@@ -53,7 +53,6 @@ private:
     QAction     *copyAction;
     QAction     *pasteAction;
 
-
     QAction     *aboutQtAction;
 };
 

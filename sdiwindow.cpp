@@ -174,7 +174,10 @@ void SdiWindow::createDocks()
 
 void SdiWindow::fileNew()
 {
-    (new SdiWindow())->show();
+    if (!docWidget->document()->isModified())
+        return;
+    else
+        (new SdiWindow())->show();
 }
 
 void SdiWindow::fileOpen()
