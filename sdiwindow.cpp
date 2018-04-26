@@ -36,39 +36,39 @@ SdiWindow::SdiWindow(QWidget *parent)
 
 void SdiWindow::createActions()
 {
-    newAction = new QAction(tr("&New"), this);
+    newAction = new QAction(tr("New"), this);
     newAction->setShortcut(tr("Ctrl+N"));
     newAction->setStatusTip(tr("Create a new document"));
     connect(newAction, SIGNAL(triggered()),
             this, SLOT(fileNew()));
 
-    openAction = new QAction(tr("&Open"), this);
+    openAction = new QAction(tr("Open"), this);
     openAction->setStatusTip(tr("Open a document"));
     connect(openAction, SIGNAL(triggered()),
             this, SLOT(fileOpen()));
 
-    saveAction = new QAction(tr("&Save"), this);
+    saveAction = new QAction(tr("Save"), this);
     saveAction->setShortcut(tr("Ctrl+S"));
     saveAction->setStatusTip(tr("Save a document"));
     connect(saveAction, SIGNAL(triggered()),
             this, SLOT(fileSave()));
 
-    saveAsAction = new QAction(tr("&SaveAs"), this);
+    saveAsAction = new QAction(tr("SaveAs"), this);
     saveAsAction->setStatusTip(tr("Save a document as"));
     connect(saveAsAction, SIGNAL(triggered()),
             this, SLOT(fileSaveAs()));
 
-    closeAction = new QAction(tr("&Close"), this);
+    closeAction = new QAction(tr("Close"), this);
     closeAction->setStatusTip(tr("Close this window"));
     connect(closeAction, SIGNAL(triggered()),
             this, SLOT(close()));
 
-    exitAction = new QAction(tr("&Exit"), this);
+    exitAction = new QAction(tr("Exit"), this);
     exitAction->setStatusTip(tr("Exit the application"));
     connect(exitAction, SIGNAL(triggered()),
             qApp, SLOT(closeAllWindows()));
 
-    undoAction = new QAction(tr("&Undo"), this);
+    undoAction = new QAction(tr("Undo"), this);
     undoAction->setShortcut (tr("Ctrl+Z"));
     undoAction->setStatusTip (tr("Undo"));
     undoAction->setEnabled(false);
@@ -77,7 +77,16 @@ void SdiWindow::createActions()
     connect(undoAction, SIGNAL(triggered()),
             docWidget, SLOT(undo()));
 
-    cutAction = new QAction(tr("&Cut"), this);
+    redoAction = new QAction(tr("Redo"), this);
+    redoAction->setShortcut (tr("Ctrl+Y"));
+    redoAction->setStatusTip (tr("Redo"));
+    redoAction->setEnabled(false);
+    connect(docWidget, SIGNAL(redoAvailable(bool)),
+            redoAction, SLOT(setEnabled(bool)));
+    connect(redoAction, SIGNAL(triggered()),
+            docWidget, SLOT(redo()));
+
+    cutAction = new QAction(tr("Cut"), this);
     cutAction->setShortcut (tr("Ctrl+X"));
     cutAction->setStatusTip (tr("Cut"));
     cutAction->setEnabled(false);
@@ -86,7 +95,7 @@ void SdiWindow::createActions()
     connect(cutAction, SIGNAL(triggered()),
             docWidget, SLOT(cut()));
 
-    copyAction = new QAction(tr("&Copy"), this);
+    copyAction = new QAction(tr("Copy"), this);
     copyAction->setShortcut (tr("Ctrl+C"));
     copyAction->setStatusTip (tr("Copy"));
     copyAction->setEnabled(false);
@@ -95,14 +104,14 @@ void SdiWindow::createActions()
     connect(copyAction, SIGNAL(triggered()),
             docWidget, SLOT(copy()));
 
-    pasteAction = new QAction(tr("&Paste"), this);
+    pasteAction = new QAction(tr("Paste"), this);
     pasteAction->setShortcut (tr("Ctrl+V"));
     pasteAction->setStatusTip (tr("Paste"));
-    //cutAction->setEnabled(false);
+    pasteAction->setEnabled(false);
     connect(pasteAction, SIGNAL(triggered()),
             docWidget, SLOT(paste()));
 
-    aboutQtAction = new QAction( tr("About &Qt"), this );
+    aboutQtAction = new QAction( tr("About Qt"), this );
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
     connect(aboutQtAction, SIGNAL(triggered()),
              qApp, SLOT(aboutQt()));
@@ -123,6 +132,8 @@ void SdiWindow::createMenus()
 
     menu = menuBar()->addMenu(tr("&Edit"));
     menu->addAction(undoAction);
+    menu->addAction(redoAction);
+    menu->addSeparator();
     menu->addAction(cutAction);
     menu->addAction(copyAction);
     menu->addAction(pasteAction);
@@ -140,7 +151,6 @@ void SdiWindow::createToolbars()
     toolbar->addAction(newAction);
     toolbar->addAction(openAction);
     toolbar->addSeparator();
-    toolbar->addAction(undoAction);
     toolbar->addAction(saveAction);
     toolbar->addAction(saveAsAction);
     toolbar->addSeparator();
@@ -155,6 +165,7 @@ void SdiWindow::createDocks()
     dock = new QDockWidget(tr("Information"), this);
     InfoWidget *info = new InfoWidget(dock);
     dock->setWidget(info);
+    dock->setVisible(false);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
 
     connect(docWidget->document(), SIGNAL(contentsChange(int,int,int)),

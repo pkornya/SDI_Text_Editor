@@ -48,6 +48,7 @@ private:
     QAction     *exitAction;
 
     QAction     *undoAction;
+    QAction     *redoAction;
     QAction     *cutAction;
     QAction     *copyAction;
     QAction     *pasteAction;
