@@ -1,6 +1,5 @@
 #include "infowidget.h"
 
-
 InfoWidget::InfoWidget(QWidget *parent)
     :QLabel(parent)
 {

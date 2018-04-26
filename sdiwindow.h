@@ -47,9 +47,11 @@ private:
     QAction     *closeAction;
     QAction     *exitAction;
 
+    QAction     *undoAction;
     QAction     *cutAction;
     QAction     *copyAction;
     QAction     *pasteAction;
+
 
     QAction     *aboutQtAction;
 };

@@ -1,5 +1,3 @@
-#include "sdiwindow.h"
-#include "infowidget.h"
 #include <QApplication>
 #include <QTextEdit>
 #include <QStatusBar>
@@ -12,6 +10,9 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
+
+#include "sdiwindow.h"
+#include "infowidget.h"
 
 SdiWindow::SdiWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,7 +31,7 @@ SdiWindow::SdiWindow(QWidget *parent)
     createMenus();
     createToolbars();
 
-    statusBar()->showMessage( "Done" );
+    statusBar()->showMessage("Done");
 }
 
 void SdiWindow::createActions()
@@ -66,6 +67,15 @@ void SdiWindow::createActions()
     exitAction->setStatusTip(tr("Exit the application"));
     connect(exitAction, SIGNAL(triggered()),
             qApp, SLOT(closeAllWindows()));
+
+    undoAction = new QAction(tr("&Undo"), this);
+    undoAction->setShortcut (tr("Ctrl+Z"));
+    undoAction->setStatusTip (tr("Undo"));
+    undoAction->setEnabled(false);
+    connect(docWidget, SIGNAL(undoAvailable(bool)),
+            undoAction, SLOT(setEnabled(bool)));
+    connect(undoAction, SIGNAL(triggered()),
+            docWidget, SLOT(undo()));
 
     cutAction = new QAction(tr("&Cut"), this);
     cutAction->setShortcut (tr("Ctrl+X"));
@@ -110,6 +120,7 @@ void SdiWindow::createMenus()
     menu->addAction(exitAction);
 
     menu = menuBar()->addMenu(tr("&Edit"));
+    menu->addAction(undoAction);
     menu->addAction(cutAction);
     menu->addAction(copyAction);
     menu->addAction(pasteAction);
@@ -127,6 +138,7 @@ void SdiWindow::createToolbars()
     toolbar->addAction(newAction);
     toolbar->addAction(openAction);
     toolbar->addSeparator();
+    toolbar->addAction(undoAction);
     toolbar->addAction(saveAction);
     toolbar->addAction(saveAsAction);
     toolbar->addSeparator();
