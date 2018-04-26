@@ -89,7 +89,9 @@ void SdiWindow::createActions()
     copyAction = new QAction(tr("&Copy"), this);
     copyAction->setShortcut (tr("Ctrl+C"));
     copyAction->setStatusTip (tr("Copy"));
-    //copyAction->setEnabled(false);
+    copyAction->setEnabled(false);
+    connect(docWidget, SIGNAL(copyAvailable(bool)),
+            copyAction, SLOT(setEnabled(bool)));
     connect(copyAction, SIGNAL(triggered()),
             docWidget, SLOT(copy()));
 
