@@ -174,7 +174,7 @@ void SdiWindow::createDocks()
 
 void SdiWindow::fileNew()
 {
-    if (!docWidget->document()->isModified())
+    if (!docWidget->document()->isEmpty())
         return;
     else
         (new SdiWindow())->show();
