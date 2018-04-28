@@ -20,22 +20,28 @@ private:
     void createMenus();
     void createToolbars();
     void createDocks();
-
     bool isSafeToClose();
-
+    void readSettings();
+    void writeSettings();
     bool saveFile(const QString &filename);
     void loadFile(const QString &filename);
+    void updateRecentFileActions();
+    QString strippedName(const QString &fullFileName);
 
 private slots:
     void fileNew();
     void fileOpen();
     bool fileSave();
     bool fileSaveAs();
+    void openRecentFile();
 
 private:
     QTextEdit   *docWidget;
     QString     currentFilename;
     QDockWidget *dock;
+    QStringList recentFiles;
+
+    enum { MaxRecentFiles = 5 };
 
     QMenu       *menu;
     QToolBar    *toolbar;
@@ -46,6 +52,9 @@ private:
     QAction     *saveAsAction;
     QAction     *closeAction;
     QAction     *exitAction;
+
+    QAction     *recentFileActions[MaxRecentFiles];
+    QAction     *separatorAction;
 
     QAction     *undoAction;
     QAction     *redoAction;

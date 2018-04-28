@@ -214,6 +214,11 @@ bool SdiWindow::fileSaveAs()
     return saveFile(fileName);
 }
 
+void SdiWindow::openRecentFile()
+{
+
+}
+
 void SdiWindow::closeEvent(QCloseEvent *event)
 {
     if (isSafeToClose())
@@ -239,6 +244,16 @@ bool SdiWindow::isSafeToClose()
     }
 
     return true;
+}
+
+void SdiWindow::readSettings()
+{
+
+}
+
+void SdiWindow::writeSettings()
+{
+
 }
 
 bool SdiWindow::saveFile(const QString &filename)
@@ -272,4 +287,14 @@ void SdiWindow::loadFile(const QString &filename)
     currentFilename = filename;
     docWidget->document()->setModified(false);
     setWindowTitle(tr("%1[*] - %2" ).arg(filename).arg(tr("SDI")));
+}
+
+void SdiWindow::updateRecentFileActions()
+{
+
+}
+
+QString SdiWindow::strippedName(const QString &fullFileName)
+{
+
 }
