@@ -191,7 +191,7 @@ void SdiWindow::createDocks()
 
 void SdiWindow::fileNew()
 {
-    if (docWidget->document()->isEmpty())
+    if (docWidget->document()->isEmpty() && !docWidget->document()->isModified())
         return;
     else
         (new SdiWindow())->show();
@@ -199,16 +199,10 @@ void SdiWindow::fileNew()
 
 void SdiWindow::fileOpen()
 {
-    QString fileName = QFileDialog::getOpenFileName(this);
-    if (fileName.isEmpty())
-        return;
-
-    if (currentFilename.isEmpty() && !docWidget->document()->isModified())
-        loadFile(fileName);
-    else {
-        SdiWindow *window = new SdiWindow();
-        window->loadFile(fileName);
-        window->show();
+    if (isSafeToClose()) {
+        QString fileName = QFileDialog::getOpenFileName(this);
+        if (!fileName.isEmpty())
+            loadFile(fileName);
     }
 }
 
