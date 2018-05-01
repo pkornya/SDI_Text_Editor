@@ -68,6 +68,13 @@ void SdiWindow::createActions()
     connect(exitAction, SIGNAL(triggered()),
             qApp, SLOT(closeAllWindows()));
 
+    for (int i = 0; i < MaxRecentFiles; ++i) {
+        recentFileActions[i] = new QAction(this);
+        recentFileActions[i]->setVisible(false);
+        connect(recentFileActions[i], SIGNAL(triggered()),
+                this, SLOT(openRecentFile()));
+    }
+
     undoAction = new QAction(tr("Undo"), this);
     undoAction->setShortcut (tr("Ctrl+Z"));
     undoAction->setStatusTip (tr("Undo"));
@@ -125,7 +132,12 @@ void SdiWindow::createMenus()
     menu->addSeparator();
     menu->addAction(saveAction);
     menu->addAction(saveAsAction);
+
+    separatorAction = menu->addSeparator();
+    for (int i = 0; i < MaxRecentFiles; ++i)
+        menu->addAction(recentFileActions[i]);
     menu->addSeparator();
+
     menu->addAction(closeAction);
     menu->addSeparator();
     menu->addAction(exitAction);
@@ -296,5 +308,5 @@ void SdiWindow::updateRecentFileActions()
 
 QString SdiWindow::strippedName(const QString &fullFileName)
 {
-
+    return QFileInfo(fullFileName).fileName();
 }
