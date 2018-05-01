@@ -18,7 +18,7 @@ SdiWindow::SdiWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(QString("%1[*] - %2").arg("unnamed").arg("SDI"));
+    setWindowTitle(QString("%1[*] - %2").arg("Untitled").arg("SDI"));
 
     docWidget = new QTextEdit(this);
     setCentralWidget(docWidget);
@@ -186,7 +186,7 @@ void SdiWindow::createDocks()
 
 void SdiWindow::fileNew()
 {
-    if (!docWidget->document()->isEmpty())
+    if (docWidget->document()->isEmpty())
         return;
     else
         (new SdiWindow())->show();
@@ -279,9 +279,7 @@ bool SdiWindow::saveFile(const QString &filename)
     QTextStream stream(&file);
     stream << docWidget->toPlainText();
 
-    currentFilename = filename;
-    docWidget->document()->setModified(false);
-    setWindowTitle(tr("%1[*] - %2" ).arg(filename).arg(tr("SDI")));
+    setCurrentFile(filename);
 
     return true;
 }
@@ -296,9 +294,8 @@ void SdiWindow::loadFile(const QString &filename)
 
     QTextStream stream(&file);
     docWidget->setPlainText(stream.readAll());
-    currentFilename = filename;
-    docWidget->document()->setModified(false);
-    setWindowTitle(tr("%1[*] - %2" ).arg(filename).arg(tr("SDI")));
+
+    setCurrentFile(filename);
 }
 
 void SdiWindow::updateRecentFileActions()
@@ -309,4 +306,20 @@ void SdiWindow::updateRecentFileActions()
 QString SdiWindow::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
+}
+
+void SdiWindow::setCurrentFile(const QString &fileName)
+{
+    currentFilename = fileName;
+    docWidget->document()->setModified(false);
+
+    QString shownName = "Untitled";
+    if (!currentFilename.isEmpty()) {
+        shownName = strippedName(currentFilename);
+        recentFiles.removeAll(currentFilename);
+        recentFiles.prepend(currentFilename);
+        updateRecentFileActions();
+    }
+    setWindowTitle(tr("%1[*] - %2").arg(shownName)
+                                   .arg(tr("SDI")));
 }

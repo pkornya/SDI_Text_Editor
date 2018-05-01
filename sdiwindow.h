@@ -27,6 +27,7 @@ private:
     void loadFile(const QString &filename);
     void updateRecentFileActions();
     QString strippedName(const QString &fullFileName);
+    void setCurrentFile(const QString &fileName);
 
 private slots:
     void fileNew();
