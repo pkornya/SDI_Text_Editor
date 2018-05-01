@@ -32,6 +32,11 @@ SdiWindow::SdiWindow(QWidget *parent)
     createToolbars();
 
     statusBar()->showMessage("Done");
+
+    foreach (QWidget *win, QApplication::topLevelWidgets()) {
+        if (SdiWindow *mainWin = qobject_cast<SdiWindow *>(win))
+            mainWin->updateRecentFileActions();
+    }
 }
 
 void SdiWindow::createActions()
@@ -228,7 +233,11 @@ bool SdiWindow::fileSaveAs()
 
 void SdiWindow::openRecentFile()
 {
-
+    if (isSafeToClose()) {
+        QAction *action = qobject_cast<QAction *>(sender());
+        if(action)
+            loadFile(action->data().toString());
+    }
 }
 
 void SdiWindow::closeEvent(QCloseEvent *event)
@@ -300,7 +309,25 @@ void SdiWindow::loadFile(const QString &filename)
 
 void SdiWindow::updateRecentFileActions()
 {
+    QMutableListIterator<QString> i(recentFiles);
+    while (i.hasNext()) {
+        if (!QFile::exists(i.next()))
+            i.remove();
+    }
 
+    for (int j = 0; j < MaxRecentFiles; ++j) {
+        if (j < recentFiles.count()) {
+            QString text = tr("%1")
+                           .arg(strippedName(recentFiles[j]));
+            recentFileActions[j]->setText(text);
+            recentFileActions[j]->setData(recentFiles[j]);
+            recentFileActions[j]->setVisible(true);
+
+        } else {
+            recentFileActions[j]->setVisible(false);
+        }
+        separatorAction->setVisible(!recentFiles.isEmpty());
+    }
 }
 
 QString SdiWindow::strippedName(const QString &fullFileName)
