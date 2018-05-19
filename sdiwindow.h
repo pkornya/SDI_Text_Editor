@@ -34,6 +34,7 @@ private slots:
     void fileOpen();
     bool fileSave();
     bool fileSaveAs();
+    void print();
     void openRecentFile();
 
 private:
@@ -51,6 +52,7 @@ private:
     QAction     *openAction;
     QAction     *saveAction;
     QAction     *saveAsAction;
+    QAction     *printAction;
     QAction     *closeAction;
     QAction     *exitAction;
 

@@ -10,6 +10,8 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
+#include <QPrintDialog>
+#include <QPrinter>
 
 #include "sdiwindow.h"
 #include "infowidget.h"
@@ -62,6 +64,11 @@ void SdiWindow::createActions()
     saveAsAction->setStatusTip(tr("Save a document as"));
     connect(saveAsAction, SIGNAL(triggered()),
             this, SLOT(fileSaveAs()));
+
+    printAction = new QAction(tr("Print"), this);
+    printAction->setStatusTip(tr("Print information"));
+    connect(printAction, SIGNAL(triggered(bool)),
+            this, SLOT(print()));
 
     closeAction = new QAction(tr("Close"), this);
     closeAction->setStatusTip(tr("Close this window"));
@@ -141,6 +148,9 @@ void SdiWindow::createMenus()
     separatorAction = menu->addSeparator();
     for (int i = 0; i < MaxRecentFiles; ++i)
         menu->addAction(recentFileActions[i]);
+    menu->addSeparator();
+
+    menu->addAction(printAction);
     menu->addSeparator();
 
     menu->addAction(closeAction);
@@ -223,6 +233,18 @@ bool SdiWindow::fileSaveAs()
         return false;
 
     return saveFile(fileName);
+}
+
+void SdiWindow::print()
+{
+    QPrinter printer;
+    printer.setPrinterName("HP LaserJet 1020");
+
+    QPrintDialog dialog(&printer, this);
+
+    if (dialog.exec() == QDialog::Rejected)
+        return;
+    docWidget->print(&printer);
 }
 
 void SdiWindow::openRecentFile()
