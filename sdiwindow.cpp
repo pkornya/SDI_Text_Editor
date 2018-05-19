@@ -50,6 +50,7 @@ void SdiWindow::createActions()
             this, SLOT(fileNew()));
 
     openAction = new QAction(tr("Open"), this);
+    openAction->setShortcut(tr("Ctrl+M"));
     openAction->setStatusTip(tr("Open a document"));
     connect(openAction, SIGNAL(triggered()),
             this, SLOT(fileOpen()));
@@ -61,21 +62,25 @@ void SdiWindow::createActions()
             this, SLOT(fileSave()));
 
     saveAsAction = new QAction(tr("SaveAs"), this);
+    saveAsAction->setShortcut(tr("Ctrl+T"));
     saveAsAction->setStatusTip(tr("Save a document as"));
     connect(saveAsAction, SIGNAL(triggered()),
             this, SLOT(fileSaveAs()));
 
     printAction = new QAction(tr("Print"), this);
+    printAction->setShortcut(tr("Ctrl+P"));
     printAction->setStatusTip(tr("Print information"));
     connect(printAction, SIGNAL(triggered(bool)),
             this, SLOT(print()));
 
     closeAction = new QAction(tr("Close"), this);
+    closeAction->setShortcut(tr("Ctrl+W"));
     closeAction->setStatusTip(tr("Close this window"));
     connect(closeAction, SIGNAL(triggered()),
             this, SLOT(close()));
 
     exitAction = new QAction(tr("Exit"), this);
+    exitAction->setShortcut(tr("Ctrl+Q"));
     exitAction->setStatusTip(tr("Exit the application"));
     connect(exitAction, SIGNAL(triggered()),
             qApp, SLOT(closeAllWindows()));
@@ -126,9 +131,14 @@ void SdiWindow::createActions()
     pasteAction = new QAction(tr("Paste"), this);
     pasteAction->setShortcut (tr("Ctrl+V"));
     pasteAction->setStatusTip (tr("Paste"));
-    pasteAction->setEnabled(false);
     connect(pasteAction, SIGNAL(triggered()),
             docWidget, SLOT(paste()));
+
+    deleteAction = new QAction(tr("Delete"), this);
+    deleteAction->setShortcut (tr("Delete"));
+    deleteAction->setStatusTip (tr("Delete"));
+    connect(deleteAction, SIGNAL(triggered()),
+            this, SLOT(deleteText()));
 
     aboutQtAction = new QAction( tr("About Qt"), this );
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
@@ -164,6 +174,7 @@ void SdiWindow::createMenus()
     menu->addAction(cutAction);
     menu->addAction(copyAction);
     menu->addAction(pasteAction);
+    menu->addAction(deleteAction);
 
     menu = menuBar()->addMenu(tr("&View"));
     menu->addAction(dock->toggleViewAction());
@@ -245,6 +256,12 @@ void SdiWindow::print()
     if (dialog.exec() == QDialog::Rejected)
         return;
     docWidget->print(&printer);
+}
+
+void SdiWindow::deleteText()
+{
+     QTextCursor cursor = docWidget->textCursor();
+     cursor.removeSelectedText();
 }
 
 void SdiWindow::openRecentFile()
