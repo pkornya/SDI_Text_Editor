@@ -158,6 +158,11 @@ void SdiWindow::createActions()
     connect(colorAction, SIGNAL(triggered()),
             this, SLOT(changeColor()));
 
+    backgroundColorAction = new QAction(tr("Background Color"), this);
+    backgroundColorAction->setStatusTip (tr("Choose background color for text"));
+    connect(backgroundColorAction, SIGNAL(triggered()),
+            this, SLOT(changeBackgroundColor()));
+
     aboutQtAction = new QAction( tr("About Qt"), this );
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
     connect(aboutQtAction, SIGNAL(triggered()),
@@ -199,6 +204,7 @@ void SdiWindow::createMenus()
     menu = menuBar()->addMenu(tr("&Format"));
     menu->addAction(fontAction);
     menu->addAction(colorAction);
+    menu->addAction(backgroundColorAction);
 
     menu = menuBar()->addMenu(tr("&View"));
     menu->addAction(dock->toggleViewAction());
@@ -312,6 +318,14 @@ void SdiWindow::changeColor()
     QColor color = QColorDialog::getColor(Qt::gray, this, "Choose Color");
     if (color.isValid()) {
         docWidget->setTextColor(color);
+    }
+}
+
+void SdiWindow::changeBackgroundColor()
+{
+    QColor color = QColorDialog::getColor(Qt::gray, this, "Choose Color");
+    if (color.isValid()) {
+        docWidget->setTextBackgroundColor(color);
     }
 }
 

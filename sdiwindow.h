@@ -39,6 +39,7 @@ private slots:
     void openRecentFile();
     void changeFont();
     void changeColor();
+    void changeBackgroundColor();
 
 private:
     QTextEdit   *docWidget;
@@ -73,6 +74,7 @@ private:
 
     QAction     *fontAction;
     QAction     *colorAction;
+    QAction     *backgroundColorAction;
 
     QAction     *aboutQtAction;
 };
