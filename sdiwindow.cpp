@@ -12,6 +12,8 @@
 #include <QTextStream>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QFontDialog>
+#include <QColorDialog>
 
 #include "sdiwindow.h"
 #include "infowidget.h"
@@ -146,6 +148,16 @@ void SdiWindow::createActions()
     connect(selectAllAction, SIGNAL(triggered()),
             docWidget, SLOT(selectAll()));
 
+    fontAction = new QAction(tr("Font"), this);
+    fontAction->setStatusTip (tr("Choose font for text"));
+    connect(fontAction, SIGNAL(triggered()),
+            this, SLOT(changeFont()));
+
+    colorAction = new QAction(tr("Color"), this);
+    colorAction->setStatusTip (tr("Choose color for text"));
+    connect(colorAction, SIGNAL(triggered()),
+            this, SLOT(changeColor()));
+
     aboutQtAction = new QAction( tr("About Qt"), this );
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
     connect(aboutQtAction, SIGNAL(triggered()),
@@ -183,6 +195,10 @@ void SdiWindow::createMenus()
     menu->addAction(deleteAction);
     menu->addSeparator();
     menu->addAction(selectAllAction);
+
+    menu = menuBar()->addMenu(tr("&Format"));
+    menu->addAction(fontAction);
+    menu->addAction(colorAction);
 
     menu = menuBar()->addMenu(tr("&View"));
     menu->addAction(dock->toggleViewAction());
@@ -278,6 +294,24 @@ void SdiWindow::openRecentFile()
         QAction *action = qobject_cast<QAction *>(sender());
         if(action)
             loadFile(action->data().toString());
+    }
+}
+
+void SdiWindow::changeFont()
+{
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, this);
+    if (ok) {
+        docWidget->setFont(font);
+    } else
+        return;
+}
+
+void SdiWindow::changeColor()
+{
+    QColor color = QColorDialog::getColor(Qt::gray, this, "Choose Color");
+    if (color.isValid()) {
+        docWidget->setTextColor(color);
     }
 }
 

@@ -37,6 +37,8 @@ private slots:
     void print();
     void deleteText();
     void openRecentFile();
+    void changeFont();
+    void changeColor();
 
 private:
     QTextEdit   *docWidget;
@@ -68,6 +70,9 @@ private:
     QAction     *deleteAction;
 
     QAction     *selectAllAction;
+
+    QAction     *fontAction;
+    QAction     *colorAction;
 
     QAction     *aboutQtAction;
 };
