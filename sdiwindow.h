@@ -67,6 +67,8 @@ private:
     QAction     *pasteAction;
     QAction     *deleteAction;
 
+    QAction     *selectAllAction;
+
     QAction     *aboutQtAction;
 };
 

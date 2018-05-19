@@ -140,6 +140,12 @@ void SdiWindow::createActions()
     connect(deleteAction, SIGNAL(triggered()),
             this, SLOT(deleteText()));
 
+    selectAllAction = new QAction(tr("Select All"), this);
+    selectAllAction->setShortcut (tr("Ctrl+A"));
+    selectAllAction->setStatusTip (tr("Select All"));
+    connect(selectAllAction, SIGNAL(triggered()),
+            docWidget, SLOT(selectAll()));
+
     aboutQtAction = new QAction( tr("About Qt"), this );
     aboutQtAction->setStatusTip( tr("About the Qt toolkit") );
     connect(aboutQtAction, SIGNAL(triggered()),
@@ -175,6 +181,8 @@ void SdiWindow::createMenus()
     menu->addAction(copyAction);
     menu->addAction(pasteAction);
     menu->addAction(deleteAction);
+    menu->addSeparator();
+    menu->addAction(selectAllAction);
 
     menu = menuBar()->addMenu(tr("&View"));
     menu->addAction(dock->toggleViewAction());
