@@ -341,19 +341,40 @@ void SdiWindow::changeBackgroundColor()
 
 void SdiWindow::findNext(const QString &str, Qt::CaseSensitivity cs)
 {
-    if (cs == Qt::CaseSensitive)
-        docWidget->find(str, QTextDocument::FindCaseSensitively);
-    if (cs == Qt::CaseInsensitive)
-        docWidget->find(str);
+    bool isFound;
+    if (cs == Qt::CaseSensitive) {
+        isFound = docWidget->find(str, QTextDocument::FindCaseSensitively);
+        if (!isFound)
+            QMessageBox::warning(this, "Unsuccessful search",
+                                 "Could not find anything by your request");
+    }
+
+    if (cs == Qt::CaseInsensitive) {
+        isFound = docWidget->find(str);
+        if (!isFound)
+            QMessageBox::warning(this, "Unsuccessful search",
+                                 "Could not find anything by your request");
+    }
+
 }
 
 void SdiWindow::findPrevious(const QString &str, Qt::CaseSensitivity cs)
 {
-    if (cs == Qt::CaseSensitive)
-        docWidget->find(str, QTextDocument::FindBackward |
+    bool isFound;
+    if (cs == Qt::CaseSensitive) {
+        isFound = docWidget->find(str, QTextDocument::FindBackward |
                              QTextDocument::FindCaseSensitively);
-    if (cs == Qt::CaseInsensitive)
-        docWidget->find(str, QTextDocument::FindBackward);
+        if (!isFound)
+            QMessageBox::warning(this, "Unsuccessful search",
+                                 "Could not find anything by your request");
+    }
+
+    if (cs == Qt::CaseInsensitive) {
+        isFound = docWidget->find(str, QTextDocument::FindBackward);
+        if (!isFound)
+            QMessageBox::warning(this, "Unsuccessful search",
+                                 "Could not find anything by your request");
+    }
 }
 
 void SdiWindow::find()
