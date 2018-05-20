@@ -26,7 +26,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         sdiwindow.cpp \
-    infowidget.cpp
+    infowidget.cpp \
+    finddialog.cpp
 
 HEADERS  += sdiwindow.h \
-    infowidget.h
+    infowidget.h \
+    finddialog.h

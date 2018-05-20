@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class QTextEdit;
+class FindDialog;
 
 class SdiWindow : public QMainWindow
 {
@@ -40,11 +41,15 @@ private slots:
     void changeFont();
     void changeColor();
     void changeBackgroundColor();
+    void findNext(const QString &str, Qt::CaseSensitivity cs);
+    void findPrevious(const QString &str, Qt::CaseSensitivity cs);
+    void find();
 
 private:
     QTextEdit   *docWidget;
     QString     currentFilename;
     QDockWidget *dock;
+    FindDialog  *findDialog;
     QStringList recentFiles;
 
     enum { MaxRecentFiles = 5 };
@@ -71,6 +76,7 @@ private:
     QAction     *deleteAction;
 
     QAction     *selectAllAction;
+    QAction     *findAction;
 
     QAction     *fontAction;
     QAction     *colorAction;

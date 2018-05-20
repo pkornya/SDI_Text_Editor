@@ -17,12 +17,15 @@
 
 #include "sdiwindow.h"
 #include "infowidget.h"
+#include "finddialog.h"
 
 SdiWindow::SdiWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(QString("%1[*] - %2").arg("Untitled").arg("SDI"));
+
+    findDialog = 0;
 
     docWidget = new QTextEdit(this);
     setCentralWidget(docWidget);
@@ -148,6 +151,12 @@ void SdiWindow::createActions()
     connect(selectAllAction, SIGNAL(triggered()),
             docWidget, SLOT(selectAll()));
 
+    findAction = new QAction(tr("Find"), this);
+    findAction->setShortcut (tr("Ctrl+F"));
+    findAction->setStatusTip (tr("Find Information"));
+    connect(findAction, SIGNAL(triggered()),
+            this, SLOT(find()));
+
     fontAction = new QAction(tr("Font"), this);
     fontAction->setStatusTip (tr("Choose font for text"));
     connect(fontAction, SIGNAL(triggered()),
@@ -200,6 +209,7 @@ void SdiWindow::createMenus()
     menu->addAction(deleteAction);
     menu->addSeparator();
     menu->addAction(selectAllAction);
+    menu->addAction(findAction);
 
     menu = menuBar()->addMenu(tr("&Format"));
     menu->addAction(fontAction);
@@ -327,6 +337,41 @@ void SdiWindow::changeBackgroundColor()
     if (color.isValid()) {
         docWidget->setTextBackgroundColor(color);
     }
+}
+
+void SdiWindow::findNext(const QString &str, Qt::CaseSensitivity cs)
+{
+    if (cs == Qt::CaseSensitive)
+        docWidget->find(str, QTextDocument::FindCaseSensitively);
+    if (cs == Qt::CaseInsensitive)
+        docWidget->find(str);
+}
+
+void SdiWindow::findPrevious(const QString &str, Qt::CaseSensitivity cs)
+{
+    if (cs == Qt::CaseSensitive)
+        docWidget->find(str, QTextDocument::FindBackward |
+                             QTextDocument::FindCaseSensitively);
+    if (cs == Qt::CaseInsensitive)
+        docWidget->find(str, QTextDocument::FindBackward);
+}
+
+void SdiWindow::find()
+{
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        connect(findDialog, SIGNAL(findNext(const QString&,
+                                            Qt::CaseSensitivity)),
+                this, SLOT(findNext(const QString&,
+                                           Qt::CaseSensitivity)));
+        connect(findDialog, SIGNAL(findPrevious(const QString&,
+                                            Qt::CaseSensitivity)),
+                this, SLOT(findPrevious(const QString&,
+                                           Qt::CaseSensitivity)));
+    }
+
+    findDialog->show();
+    findDialog->activateWindow();
 }
 
 void SdiWindow::closeEvent(QCloseEvent *event)
