@@ -14,6 +14,7 @@
 #include <QPrinter>
 #include <QFontDialog>
 #include <QColorDialog>
+#include <QSettings>
 
 #include "sdiwindow.h"
 #include "infowidget.h"
@@ -24,7 +25,6 @@ SdiWindow::SdiWindow(QWidget *parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(QString("%1[*] - %2").arg("Untitled").arg("SDI"));
-
     findDialog = 0;
 
     docWidget = new QTextEdit(this);
@@ -37,6 +37,8 @@ SdiWindow::SdiWindow(QWidget *parent)
     createActions();
     createMenus();
     createToolbars();
+
+    readSettings();
 
     statusBar()->showMessage("Done");
 
@@ -397,10 +399,13 @@ void SdiWindow::find()
 
 void SdiWindow::closeEvent(QCloseEvent *event)
 {
-    if (isSafeToClose())
+    if (isSafeToClose()) {
+        writeSettings();
         event->accept();
-    else
+    }
+    else {
         event->ignore();
+    }
 }
 
 bool SdiWindow::isSafeToClose()
@@ -424,12 +429,23 @@ bool SdiWindow::isSafeToClose()
 
 void SdiWindow::readSettings()
 {
+    QSettings settings("Software Inc.", "Notepad");
 
+    QRect rect = settings.value("geometry",
+                                QRect(200, 200, 400, 400)).toRect();
+    move(rect.topLeft());
+    resize(rect.size());
+
+    recentFiles = settings.value("recentFiles").toStringList();
+    updateRecentFileActions();
 }
 
 void SdiWindow::writeSettings()
 {
+    QSettings settings("Software Inc.", "Notepad");
 
+    settings.setValue("geometry", geometry());
+    settings.setValue("recentFiles", recentFiles);
 }
 
 bool SdiWindow::saveFile(const QString &filename)
