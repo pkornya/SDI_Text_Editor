@@ -44,6 +44,7 @@ private slots:
     void findNext(const QString &str, Qt::CaseSensitivity cs);
     void findPrevious(const QString &str, Qt::CaseSensitivity cs);
     void find();
+    void about();
 
 private:
     QTextEdit   *docWidget;

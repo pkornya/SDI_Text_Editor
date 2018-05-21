@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/copy.png</file>
+        <file>images/cut.png</file>
+        <file>images/delete.png</file>
+        <file>images/exit.png</file>
+        <file>images/find.png</file>
+        <file>images/gotocell.png</file>
+        <file>images/logo.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/paste.png</file>
+        <file>images/print.png</file>
+        <file>images/save.png</file>
+        <file>images/saveAs.png</file>
+        <file>images/select.png</file>
+        <file>images/close.png</file>
+        <file>images/recentfile.png</file>
+        <file>images/redo.png</file>
+        <file>images/undo.png</file>
+        <file>images/selectall.png</file>
+        <file>images/backgroundcolor.png</file>
+        <file>images/color.png</file>
+        <file>images/font.png</file>
+        <file>images/about.png</file>
+    </qresource>
+</RCC>

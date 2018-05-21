@@ -32,3 +32,6 @@ SOURCES += main.cpp\
 HEADERS  += sdiwindow.h \
     infowidget.h \
     finddialog.h
+
+RESOURCES += \
+    resource.qrc
